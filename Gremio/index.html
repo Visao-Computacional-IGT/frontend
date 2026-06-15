@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - IGT Grêmio</title>  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="login-page-body">
+
+    <div class="login-overlay active" id="login-overlay">
+        <div class="login-form">
+            
+            <div class="login-header">
+                <h1>GRÊMIO - IGT</h1>
+                <p>Acesso Restrito</p>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Usuário</label>
+                <input type="text" id="username" placeholder="Digite seu usuário" value="admin">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" placeholder="Digite sua senha" value="1234">
+            </div>
+
+            <button class="login-btn" id="login-btn" onclick="window.location.href='pages/dashboard.html'">
+                Entrar <i class="fas fa-sign-in-alt"></i>
+            </button>
+            
+        </div>
+    </div>
+
+</body>
+</html>

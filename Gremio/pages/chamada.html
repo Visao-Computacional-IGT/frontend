@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chamada - IGT Grêmio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container" id="app-container">
+        
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>GRÊMIO - IGT</h1>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item" onclick="window.location.href='dashboard.html'">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard Geral
+                </li>
+                <li class="nav-item" onclick="window.location.href='cadastrar-alunos.html'">
+                    <i class="fas fa-users"></i> Cadastrar Alunos
+                </li>
+                <li class="nav-item" onclick="window.location.href='chamada.html'">
+                    <i class="fas fa-clipboard-list"></i> Chamada
+                </li>
+                <li class="nav-item" onclick="window.location.href='camera.html'">
+                    <i class="fas fa-camera"></i> Facial (Python)
+                </li>
+                <li class="nav-item" onclick="window.location.href='upload-fotos.html'">
+                    <i class="fas fa-cloud-upload-alt"></i> Upload de Fotos
+                </li>
+                <li class="nav-item" onclick="window.location.href='calendario.html'">
+                    <i class="fas fa-calendar-alt"></i> Calendário
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h2 id="page-title">Controle de Frequência</h2>
+                <div class="header-controls">
+                    <div class="user-info">
+                        <div class="user-avatar">IGT</div>
+                        <span>Admin</span>
+                    </div>
+                    <button class="logout-btn" onclick="window.location.href='../index.html'" title="Sair">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="page active" id="chamada-page">
+                <div class="card">
+                    
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 2px solid #eee; padding-bottom: 15px;">
+                        <h3><i class="fas fa-clipboard-list" style="color: var(--primary-color);"></i> Lista de Presença</h3>
+                        
+                        <div class="form-group" style="margin: 0; display: flex; align-items: center; gap: 10px;">
+                            <label for="chamada-data" style="margin: 0; font-weight: 500;">Data da Chamada:</label>
+                            <input type="date" id="chamada-data" style="padding: 8px 12px; border-radius: 4px; border: 1px solid #ccc; font-weight: bold; color: #333; width: auto;">
+                        </div>
+                    </div>
+                    
+                    <div class="table-container" style="margin-top: 20px;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Matrícula</th>
+                                    <th>Nome do Aluno</th>
+                                    <th>Turma</th>
+                                    <th>Status (Hoje)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="chamada-tbody">
+                                </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-top: 25px; text-align: right; border-top: 1px solid #eee; padding-top: 15px;">
+                        <button class="login-btn" id="btn-salvar-chamada" style="width: auto; padding: 12px 30px; font-size: 16px;">
+                            <i class="fas fa-save"></i> Salvar Chamada
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="../js/main.js"></script>
+
+</body>
+</html>

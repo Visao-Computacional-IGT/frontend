@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Alunos - IGT Grêmio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container" id="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>GRÊMIO - IGT</h1>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item" onclick="window.location.href='dashboard.html'">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard Geral
+                </li>
+                <li class="nav-item" onclick="window.location.href='cadastrar-alunos.html'">
+                    <i class="fas fa-users"></i> Cadastrar Alunos
+                </li>
+                <li class="nav-item" onclick="window.location.href='chamada.html'">
+                    <i class="fas fa-clipboard-list"></i> Chamada
+                </li>
+                <li class="nav-item" onclick="window.location.href='camera.html'">
+                    <i class="fas fa-camera"></i> Facial (Python)
+                </li>
+                <li class="nav-item" onclick="window.location.href='upload-fotos.html'">
+                    <i class="fas fa-cloud-upload-alt"></i> Upload de Fotos
+                </li>
+                <li class="nav-item" onclick="window.location.href='calendario.html'">
+                    <i class="fas fa-calendar-alt"></i> Calendário
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h2 id="page-title">Gestão de Alunos</h2>
+                <div class="header-controls">
+                    <div class="user-info">
+                        <div class="user-avatar">IGT</div>
+                        <span>Admin</span>
+                    </div>
+                    <button class="logout-btn" onclick="window.location.href='../index.html'" title="Sair">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="page active" id="cadastro-page">
+                
+                <div class="card" id="form-cadastro-card" style="display: none; border-top: 4px solid var(--primary-color);">
+                    <div class="card-header" style="border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;">
+                        <h3><i class="fas fa-user-plus" style="color: var(--primary-color);"></i> Novo Cadastro</h3>
+                        <button class="filter-btn" id="btn-fechar-form" style="background: #f8f9fa; color: #333;"><i class="fas fa-times"></i> Fechar</button>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Matrícula</label>
+                            <input type="text" id="cad-matricula" placeholder="Ex: 2026008">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Nome Completo</label>
+                            <input type="text" id="cad-nome" placeholder="Nome do aluno">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Turma</label>
+                            <select id="cad-turma" style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+                                <option value="1º Ano A">1º Ano A</option>
+                                <option value="1º Ano B">1º Ano B</option>
+                                <option value="2º Ano A">2º Ano A</option>
+                                <option value="3º Ano A">3º Ano A</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Status</label>
+                            <select id="cad-status" style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: right; margin-top: 20px;">
+                        <button class="login-btn" id="btn-salvar-aluno" style="width: auto; padding: 10px 30px;"><i class="fas fa-save"></i> Salvar Aluno</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between;">
+                        <h3>Lista de Alunos</h3>
+                        
+                        <div class="filter-controls" id="status-filter-buttons">
+                             <button class="filter-btn active" data-status="all">Todos</button>
+                             <button class="filter-btn" data-status="ativo">Ativos</button>
+                             <button class="filter-btn" data-status="inativo">Inativos</button>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div class="search-container">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="search-input" placeholder="Buscar aluno...">
+                            </div>
+                            
+                            <button class="login-btn" id="btn-novo-aluno" style="width: auto; padding: 8px 16px; margin: 0; display: flex; align-items: center; gap: 5px;">
+                                <i class="fas fa-plus"></i> Novo Aluno
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead id="analise-thead">
+                                <tr>
+                                    <th data-sort="matricula">Matrícula <i class="fas"></i></th>
+                                    <th data-sort="nome">Nome do Aluno <i class="fas"></i></th>
+                                    <th data-sort="turma">Turma <i class="fas"></i></th>
+                                    <th data-sort="status">Status <i class="fas"></i></th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analise-tbody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="../js/main.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnNovo = document.getElementById('btn-novo-aluno');
+            const btnFechar = document.getElementById('btn-fechar-form');
+            const formCard = document.getElementById('form-cadastro-card');
+
+            if (btnNovo && formCard) {
+                btnNovo.addEventListener('click', () => {
+                    formCard.style.display = 'block';
+                });
+            }
+
+            if (btnFechar && formCard) {
+                btnFechar.addEventListener('click', () => {
+                    formCard.style.display = 'none';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

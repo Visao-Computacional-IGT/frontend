@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário Anual - IGT Grêmio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container" id="app-container">
+        
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>GRÊMIO - IGT</h1>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item" onclick="window.location.href='dashboard.html'">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard Geral
+                </li>
+                <li class="nav-item" onclick="window.location.href='cadastrar-alunos.html'">
+                    <i class="fas fa-users"></i> Cadastrar Alunos
+                </li>
+                <li class="nav-item" onclick="window.location.href='chamada.html'">
+                    <i class="fas fa-clipboard-list"></i> Chamada
+                </li>
+                <li class="nav-item" onclick="window.location.href='camera.html'">
+                    <i class="fas fa-camera"></i> Facial (Python)
+                </li>
+                <li class="nav-item" onclick="window.location.href='upload-fotos.html'">
+                    <i class="fas fa-cloud-upload-alt"></i> Upload de Fotos
+                </li>
+                <li class="nav-item" onclick="window.location.href='calendario.html'">
+                    <i class="fas fa-calendar-alt"></i> Calendário
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h2 id="page-title">Agenda Anual do Projeto</h2>
+                <div class="header-controls">
+                    <button class="logout-btn" onclick="window.location.href='../index.html'" title="Sair">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="page active">
+                <div class="card" style="border-top: 4px solid var(--primary-color);">
+                    <div class="card-header" style="border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px;">
+                        <h3><i class="fas fa-calendar" style="color: var(--primary-color);"></i> Calendário 2026</h3>
+                        
+                        <div style="display: flex; gap: 15px; font-size: 0.85em; align-items: center;">
+                            <span style="display: flex; align-items: center; gap: 5px;">
+                                <div style="width: 12px; height: 12px; background: var(--primary-color); border-bottom: 2px solid #000; border-radius: 2px;"></div> Jogos
+                            </span>
+                            <span style="display: flex; align-items: center; gap: 5px;">
+                                <div style="width: 12px; height: 12px; background: var(--success-color); border-radius: 2px;"></div> Social
+                            </span>
+                        </div>
+                    </div>
+
+                    <div id="calendario-anual-container" class="year-calendar-grid">
+                        </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="../js/main.js"></script>
+</body>
+</html>

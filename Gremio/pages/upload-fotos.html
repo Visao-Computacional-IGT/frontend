@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de Fotos - IGT Grêmio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container" id="app-container">
+        
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>GRÊMIO - IGT</h1>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item" onclick="window.location.href='dashboard.html'">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard Geral
+                </li>
+                <li class="nav-item" onclick="window.location.href='cadastrar-alunos.html'">
+                    <i class="fas fa-users"></i> Cadastrar Alunos
+                </li>
+                <li class="nav-item" onclick="window.location.href='chamada.html'">
+                    <i class="fas fa-clipboard-list"></i> Chamada
+                </li>
+                <li class="nav-item" onclick="window.location.href='camera.html'">
+                    <i class="fas fa-camera"></i> Facial (Python)
+                </li>
+                <li class="nav-item" onclick="window.location.href='upload-fotos.html'">
+                    <i class="fas fa-cloud-upload-alt"></i> Upload de Fotos
+                </li>
+                <li class="nav-item" onclick="window.location.href='calendario.html'">
+                    <i class="fas fa-calendar-alt"></i> Calendário
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h2 id="page-title">Gestão de Fotos</h2>
+                <div class="header-controls">
+                    <button class="logout-btn" onclick="window.location.href='../index.html'" title="Sair">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="page active">
+                <div class="card" style="max-width: 600px; margin: 0 auto; border-top: 4px solid var(--primary-color);">
+                    <div class="card-header" style="border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px;">
+                        <h3><i class="fas fa-id-badge" style="color: var(--primary-color);"></i> Vincular Foto ao Aluno</h3>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="select-aluno">Selecione o Aluno:</label>
+                        <select id="select-aluno" style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+                            <option value="">-- Escolha um aluno --</option>
+                            <option value="2026001">2026001 - João Silva (3º Ano A)</option>
+                            <option value="2026002">2026002 - Maria Oliveira (1º Ano B)</option>
+                            <option value="2026004">2026004 - Ana Souza (1º Ano A)</option>
+                            <option value="2026006">2026006 - Lucas Mendes (2º Ano A)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Foto do Rosto (Formato JPG ou PNG):</label>
+                        <div class="upload-area" id="drop-zone">
+                            <i class="fas fa-file-image"></i>
+                            <h4 style="color: #333;">Clique aqui ou arraste a foto</h4>
+                            <p style="color: #777; font-size: 14px; margin-top: 5px;">Tamanho máximo: 5MB</p>
+                            <input type="file" id="foto-input" accept="image/png, image/jpeg">
+                        </div>
+                    </div>
+
+                    <div class="preview-container" id="preview-container">
+                        <h4 style="margin-bottom: 10px; color: #555;">Pré-visualização:</h4>
+                        <img src="" alt="Preview" class="preview-image" id="img-preview">
+                        <button class="remove-foto-btn" id="btn-remover-foto"><i class="fas fa-trash"></i> Remover Imagem</button>
+                    </div>
+
+                    <div style="margin-top: 30px; text-align: right; border-top: 1px solid #eee; padding-top: 20px;">
+                        <button class="login-btn" id="btn-salvar-foto" style="width: auto; padding: 12px 30px;">
+                            <i class="fas fa-cloud-upload-alt"></i> Salvar Foto no Sistema
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fotoInput = document.getElementById('foto-input');
+            const previewContainer = document.getElementById('preview-container');
+            const imgPreview = document.getElementById('img-preview');
+            const btnRemover = document.getElementById('btn-remover-foto');
+            const btnSalvar = document.getElementById('btn-salvar-foto');
+            const selectAluno = document.getElementById('select-aluno');
+            const dropZone = document.getElementById('drop-zone');
+
+            // Quando o usuário escolhe um arquivo
+            fotoInput.addEventListener('change', function() {
+                const file = this.files[0];
+                
+                if (file) {
+                    const reader = new FileReader();
+                    
+                    // Converte a imagem para mostrar na tela
+                    reader.onload = function(e) {
+                        imgPreview.src = e.target.result;
+                        previewContainer.style.display = 'flex';
+                        dropZone.style.display = 'none'; // Esconde a caixa de upload
+                    }
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Botão de remover a foto escolhida
+            btnRemover.addEventListener('click', () => {
+                fotoInput.value = ''; // Limpa o input
+                imgPreview.src = '';
+                previewContainer.style.display = 'none';
+                dropZone.style.display = 'block'; // Mostra a caixa de upload de novo
+            });
+
+            // Botão de salvar no sistema
+            btnSalvar.addEventListener('click', () => {
+                const alunoId = selectAluno.value;
+                const file = fotoInput.files[0];
+
+                if (!alunoId) {
+                    alert('Por favor, selecione um aluno primeiro!');
+                    return;
+                }
+
+                if (!file) {
+                    alert('Por favor, envie uma foto!');
+                    return;
+                }
+
+                alert(`Sucesso! A foto de ${file.name} foi vinculada à matrícula ${alunoId}.`);
+                
+                // Limpa o formulário após salvar
+                selectAluno.value = '';
+                btnRemover.click();
+            });
+        });
+    </script>
+</body>
+</html>
