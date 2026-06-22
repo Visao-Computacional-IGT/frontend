@@ -4,42 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reconhecimento Facial - IGT Grêmio</title>
-    <!-- Ícones e CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <div class="container" id="app-container">
-        
-        <!-- SIDEBAR (MENU LATERAL) -->
         <aside class="sidebar">
             <div class="logo">
                 <h1>GRÊMIO - IGT</h1>
             </div>
-
             <ul class="nav-menu">
-                <li class="nav-item" onclick="window.location.href='dashboard.html'">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard Geral
-                </li>
-                <li class="nav-item" onclick="window.location.href='cadastrar-alunos.html'">
-                    <i class="fas fa-users"></i> Cadastrar Alunos
-                </li>
-                <li class="nav-item" onclick="window.location.href='chamada.html'">
-                    <i class="fas fa-clipboard-list"></i> Chamada
-                </li>
-                <li class="nav-item" onclick="window.location.href='camera.html'">
-                    <i class="fas fa-camera"></i> Facial (Python)
-                </li>
-                <li class="nav-item" onclick="window.location.href='upload-fotos.html'">
-                    <i class="fas fa-cloud-upload-alt"></i> Upload de Fotos
-                </li>
-                <li class="nav-item" onclick="window.location.href='calendario.html'">
-                    <i class="fas fa-calendar-alt"></i> Calendário
-                </li>
+                <li class="nav-item" onclick="window.location.href='dashboard.html'"><i class="fas fa-tachometer-alt"></i> Dashboard Geral</li>
+                <li class="nav-item" onclick="window.location.href='cadastrar-alunos.html'"><i class="fas fa-users"></i> Cadastrar Alunos</li>
+                <li class="nav-item" onclick="window.location.href='alunos.html'"><i class="fas fa-user-graduate"></i> Alunos</li>
+                <li class="nav-item" onclick="window.location.href='chamada.html'"><i class="fas fa-clipboard-list"></i> Chamada</li>
+                <li class="nav-item" onclick="window.location.href='camera.html'"><i class="fas fa-camera"></i> Facial (Python)</li>
+                <li class="nav-item" onclick="window.location.href='calendario.html'"><i class="fas fa-calendar-alt"></i> Calendário</li>
             </ul>
         </aside>
 
-        <!-- CONTEÚDO PRINCIPAL -->
         <main class="main-content">
             <header class="header">
                 <h2 id="page-title">Reconhecimento Facial</h2>
@@ -52,51 +35,46 @@
 
             <div class="page active">
                 <div class="card">
-                    <div class="card-header" style="border-bottom: 2px solid #eee; padding-bottom: 15px;">
-                        <h3><i class="fas fa-video" style="color: var(--primary-color);"></i> Sistema de Catraca/Câmera</h3>
-                        <p style="color: #666; font-size: 14px; margin-top: 5px;">Aguardando integração com script Python via WebSocket/API.</p>
+                    <div class="card-header border-bottom pb-3">
+                        <h3 class="card-title m-0"><i class="fas fa-video text-primary"></i> Sistema de Catraca/Câmera</h3>
+                        <p class="text-muted text-small mt-2">Aguardando integração com script Python via WebSocket/API.</p>
                     </div>
 
-                    <div class="camera-container">
-                        <!-- Lado Esquerdo: Vídeo -->
-                        <div>
-                            <div class="video-wrapper">
-                                <video id="video-feed" autoplay playsinline></video>
-                                <div class="scan-line" id="scan-line"></div>
-                                <div id="camera-status" style="position: absolute; color: #fff; text-align: center;">
-                                    <i class="fas fa-camera-slash fa-3x" style="margin-bottom: 10px;"></i>
+                    <div class="camera-container camera-grid mt-4">
+                        <div class="camera-feed-section">
+                            <div class="video-wrapper position-relative">
+                                <video id="video-feed" autoplay playsinline class="w-100 h-100 object-cover"></video>
+                                <div class="scan-line d-none" id="scan-line"></div>
+                                <div id="camera-status" class="camera-status-overlay text-center text-white">
+                                    <i class="fas fa-camera-slash icon-xl mb-2"></i>
                                     <p>Câmera Desligada</p>
                                 </div>
                             </div>
-                            <div class="controls">
-                                <button class="login-btn" id="btn-iniciar" style="flex: 1; padding: 10px;">
+                            <div class="controls action-buttons d-flex gap-10 mt-3">
+                                <button class="btn btn-primary btn-flex flex-1 p-2" id="btn-iniciar">
                                     <i class="fas fa-play"></i> Ligar Câmera
                                 </button>
-                                <button class="login-btn" id="btn-parar" style="flex: 1; padding: 10px; background-color: #343a40;">
+                                <button class="btn btn-dark btn-flex flex-1 p-2" id="btn-parar">
                                     <i class="fas fa-stop"></i> Desligar
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Lado Direito: Log de Reconhecimento -->
-                        <div>
-                            <h4 style="margin-bottom: 15px; color: var(--dark-blue);">Alunos Reconhecidos Hoje</h4>
-                            <div class="recognition-log" id="log-container">
-                                <p style="text-align: center; color: #999; margin-top: 20px;" id="empty-log">Nenhum aluno detectado ainda.</p>
-                                <!-- Os logs aparecerão aqui via JS -->
+                        <div class="recognition-section">
+                            <h4 class="section-title text-dark-blue mb-3">Alunos Reconhecidos Hoje</h4>
+                            <div class="recognition-log log-container bg-white border-rounded p-3 max-h-400 overflow-y-auto" id="log-container">
+                                <p class="empty-state text-center text-muted mt-4" id="empty-log">Nenhum aluno detectado ainda.</p>
                             </div>
-                            <button class="login-btn" style="width: 100%; margin-top: 15px; padding: 10px; background-color: var(--success-color);">
+                            <button class="btn btn-success btn-full mt-3 p-2">
                                 <i class="fas fa-check-double"></i> Confirmar Presenças
                             </button>
                         </div>
                     </div>
-
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Script Isolado para a Câmera Funcionar -->
     <script>
         const videoElement = document.getElementById('video-feed');
         const btnIniciar = document.getElementById('btn-iniciar');
@@ -105,82 +83,64 @@
         const scanLine = document.getElementById('scan-line');
         const logContainer = document.getElementById('log-container');
         const emptyLog = document.getElementById('empty-log');
+        let streamData = null, simuladorTimer = null;
 
-        let streamData = null;
-        let simuladorTimer = null;
-
-        // Lista de alunos mockados para a simulação
         const alunosMock = [
             { nome: 'João Silva', matricula: '2026001', hora: '08:05' },
             { nome: 'Ana Souza', matricula: '2026004', hora: '08:06' },
             { nome: 'Lucas Mendes', matricula: '2026006', hora: '08:12' }
         ];
 
-        // Ligar a Câmera
         btnIniciar.addEventListener('click', async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 videoElement.srcObject = stream;
                 streamData = stream;
-                
                 statusText.style.display = 'none';
                 scanLine.style.display = 'block';
-
-                // Simular reconhecimento de alunos (Para fins de apresentação)
                 iniciarSimulacaoReconhecimento();
-
             } catch (err) {
                 console.error("Erro ao acessar a câmera: ", err);
                 alert("Não foi possível acessar a câmera do dispositivo.");
             }
         });
 
-        // Desligar a Câmera
         btnParar.addEventListener('click', () => {
             if (streamData) {
-                const tracks = streamData.getTracks();
-                tracks.forEach(track => track.stop());
+                streamData.getTracks().forEach(track => track.stop());
                 videoElement.srcObject = null;
-                
                 statusText.style.display = 'block';
                 scanLine.style.display = 'none';
                 clearInterval(simuladorTimer);
             }
         });
 
-        // Função para simular o Python jogando dados na tela
         function iniciarSimulacaoReconhecimento() {
             let index = 0;
-            
             simuladorTimer = setInterval(() => {
                 if (index < alunosMock.length) {
                     if (emptyLog) emptyLog.style.display = 'none';
-
                     const aluno = alunosMock[index];
                     const logItem = document.createElement('div');
-                    logItem.className = 'log-item';
-                    
-                    // Pega as iniciais do nome
+                    logItem.className = 'log-item d-flex align-center gap-10 p-2 border-bottom';
                     const iniciais = aluno.nome.split(' ').map(n => n[0]).join('').substring(0,2);
 
                     logItem.innerHTML = `
                         <div class="log-avatar">${iniciais}</div>
                         <div class="log-info">
-                            <strong>${aluno.nome}</strong>
-                            <span>Matrícula: ${aluno.matricula} | <i class="far fa-clock"></i> ${new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span>
+                            <strong class="text-dark">${aluno.nome}</strong>
+                            <span class="text-small text-muted">Matrícula: ${aluno.matricula} | <i class="far fa-clock"></i> ${new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span>
                         </div>
-                        <div style="margin-left: auto; color: var(--success-color);">
+                        <div class="ms-auto text-success">
                             <i class="fas fa-check-circle"></i>
                         </div>
                     `;
-                    
-                    // Adiciona no topo da lista
                     logContainer.prepend(logItem);
                     index++;
                 } else {
                     clearInterval(simuladorTimer);
                 }
-            }, 4000); // Adiciona um aluno a cada 4 segundos
+            }, 4000);
         }
     </script>
 </body>

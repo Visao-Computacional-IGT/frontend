@@ -9,31 +9,17 @@
 </head>
 <body>
     <div class="container" id="app-container">
-        
         <aside class="sidebar">
             <div class="logo">
                 <h1>GRÊMIO - IGT</h1>
             </div>
-
             <ul class="nav-menu">
-                <li class="nav-item" onclick="window.location.href='dashboard.html'">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard Geral
-                </li>
-                <li class="nav-item" onclick="window.location.href='cadastrar-alunos.html'">
-                    <i class="fas fa-users"></i> Cadastrar Alunos
-                </li>
-                <li class="nav-item" onclick="window.location.href='chamada.html'">
-                    <i class="fas fa-clipboard-list"></i> Chamada
-                </li>
-                <li class="nav-item" onclick="window.location.href='camera.html'">
-                    <i class="fas fa-camera"></i> Facial (Python)
-                </li>
-                <li class="nav-item" onclick="window.location.href='upload-fotos.html'">
-                    <i class="fas fa-cloud-upload-alt"></i> Upload de Fotos
-                </li>
-                <li class="nav-item" onclick="window.location.href='calendario.html'">
-                    <i class="fas fa-calendar-alt"></i> Calendário
-                </li>
+                <li class="nav-item" onclick="window.location.href='dashboard.html'"><i class="fas fa-tachometer-alt"></i> Dashboard Geral</li>
+                <li class="nav-item" onclick="window.location.href='cadastrar-alunos.html'"><i class="fas fa-users"></i> Cadastrar Alunos</li>
+                <li class="nav-item" onclick="window.location.href='alunos.html'"><i class="fas fa-user-graduate"></i> Alunos</li>
+                <li class="nav-item" onclick="window.location.href='chamada.html'"><i class="fas fa-clipboard-list"></i> Chamada</li>
+                <li class="nav-item" onclick="window.location.href='camera.html'"><i class="fas fa-camera"></i> Facial (Python)</li>
+                <li class="nav-item" onclick="window.location.href='calendario.html'"><i class="fas fa-calendar-alt"></i> Calendário</li>
             </ul>
         </aside>
 
@@ -48,40 +34,40 @@
             </header>
 
             <div class="page active">
-                <div class="card" style="max-width: 600px; margin: 0 auto; border-top: 4px solid var(--primary-color);">
-                    <div class="card-header" style="border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px;">
-                        <h3><i class="fas fa-id-badge" style="color: var(--primary-color);"></i> Vincular Foto ao Aluno</h3>
+                <div class="card card-centered max-w-600 m-auto">
+                    <div class="card-header border-bottom pb-3 mb-4">
+                        <h3 class="card-title m-0"><i class="fas fa-id-badge text-primary"></i> Vincular Foto ao Aluno</h3>
                     </div>
 
-                    <div class="form-group">
-                        <label for="select-aluno">Selecione o Aluno:</label>
-                        <select id="select-aluno" style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+                    <div class="form-group mb-3">
+                        <label for="select-aluno" class="form-label">Selecione o Aluno:</label>
+                        <select id="select-aluno" class="form-control form-select-large">
                             <option value="">-- Escolha um aluno --</option>
-                            <option value="2026001">2026001 - João Silva (3º Ano A)</option>
-                            <option value="2026002">2026002 - Maria Oliveira (1º Ano B)</option>
-                            <option value="2026004">2026004 - Ana Souza (1º Ano A)</option>
-                            <option value="2026006">2026006 - Lucas Mendes (2º Ano A)</option>
+                            <option value="2026001">2026001</option>
+                            <option value="2026002">2026002</option>
+                            <option value="2026004">2026004</option>
+                            <option value="2026006">2026006</option>
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label>Foto do Rosto (Formato JPG ou PNG):</label>
-                        <div class="upload-area" id="drop-zone">
-                            <i class="fas fa-file-image"></i>
-                            <h4 style="color: #333;">Clique aqui ou arraste a foto</h4>
-                            <p style="color: #777; font-size: 14px; margin-top: 5px;">Tamanho máximo: 5MB</p>
-                            <input type="file" id="foto-input" accept="image/png, image/jpeg">
+                    <div class="form-group mb-3">
+                        <label class="form-label">Foto do Rosto (Formato JPG ou PNG):</label>
+                        <div class="upload-area text-center bg-light border-dashed p-4 cursor-pointer" id="drop-zone">
+                            <i class="fas fa-file-image icon-xxl text-primary mb-3"></i>
+                            <h4 class="text-dark m-0">Clique aqui ou arraste a foto</h4>
+                            <p class="text-muted text-small mt-2">Tamanho máximo: 5MB</p>
+                            <input type="file" id="foto-input" class="d-none" accept="image/png, image/jpeg">
                         </div>
                     </div>
 
-                    <div class="preview-container" id="preview-container">
-                        <h4 style="margin-bottom: 10px; color: #555;">Pré-visualização:</h4>
-                        <img src="" alt="Preview" class="preview-image" id="img-preview">
-                        <button class="remove-foto-btn" id="btn-remover-foto"><i class="fas fa-trash"></i> Remover Imagem</button>
+                    <div class="preview-container d-none flex-column align-center mt-4" id="preview-container">
+                        <h4 class="preview-title text-muted mb-2">Pré-visualização:</h4>
+                        <img src="" alt="Preview" class="preview-image border-primary shadow-sm rounded object-cover max-w-200" id="img-preview">
+                        <button class="btn btn-link text-error mt-2 text-underline" id="btn-remover-foto"><i class="fas fa-trash"></i> Remover Imagem</button>
                     </div>
 
-                    <div style="margin-top: 30px; text-align: right; border-top: 1px solid #eee; padding-top: 20px;">
-                        <button class="login-btn" id="btn-salvar-foto" style="width: auto; padding: 12px 30px;">
+                    <div class="card-footer align-right border-top mt-4 pt-4 text-right">
+                        <button class="btn btn-primary btn-auto px-4" id="btn-salvar-foto">
                             <i class="fas fa-cloud-upload-alt"></i> Salvar Foto no Sistema
                         </button>
                     </div>
@@ -93,57 +79,41 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const fotoInput = document.getElementById('foto-input');
+            const dropZone = document.getElementById('drop-zone');
             const previewContainer = document.getElementById('preview-container');
             const imgPreview = document.getElementById('img-preview');
             const btnRemover = document.getElementById('btn-remover-foto');
             const btnSalvar = document.getElementById('btn-salvar-foto');
             const selectAluno = document.getElementById('select-aluno');
-            const dropZone = document.getElementById('drop-zone');
 
-            // Quando o usuário escolhe um arquivo
+            dropZone.addEventListener('click', () => fotoInput.click());
+
             fotoInput.addEventListener('change', function() {
                 const file = this.files[0];
-                
                 if (file) {
                     const reader = new FileReader();
-                    
-                    // Converte a imagem para mostrar na tela
                     reader.onload = function(e) {
                         imgPreview.src = e.target.result;
-                        previewContainer.style.display = 'flex';
-                        dropZone.style.display = 'none'; // Esconde a caixa de upload
+                        previewContainer.classList.remove('d-none');
+                        previewContainer.classList.add('d-flex');
+                        dropZone.classList.add('d-none');
                     }
-                    
                     reader.readAsDataURL(file);
                 }
             });
 
-            // Botão de remover a foto escolhida
             btnRemover.addEventListener('click', () => {
-                fotoInput.value = ''; // Limpa o input
+                fotoInput.value = '';
                 imgPreview.src = '';
-                previewContainer.style.display = 'none';
-                dropZone.style.display = 'block'; // Mostra a caixa de upload de novo
+                previewContainer.classList.add('d-none');
+                previewContainer.classList.remove('d-flex');
+                dropZone.classList.remove('d-none');
             });
 
-            // Botão de salvar no sistema
             btnSalvar.addEventListener('click', () => {
-                const alunoId = selectAluno.value;
-                const file = fotoInput.files[0];
-
-                if (!alunoId) {
-                    alert('Por favor, selecione um aluno primeiro!');
-                    return;
-                }
-
-                if (!file) {
-                    alert('Por favor, envie uma foto!');
-                    return;
-                }
-
-                alert(`Sucesso! A foto de ${file.name} foi vinculada à matrícula ${alunoId}.`);
-                
-                // Limpa o formulário após salvar
+                if (!selectAluno.value) return alert('Por favor, selecione um aluno primeiro!');
+                if (!fotoInput.files[0]) return alert('Por favor, envie uma foto!');
+                alert(`Sucesso! A foto foi vinculada à matrícula ${selectAluno.value}.`);
                 selectAluno.value = '';
                 btnRemover.click();
             });

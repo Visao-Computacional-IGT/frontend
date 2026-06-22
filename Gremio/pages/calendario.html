@@ -9,31 +9,17 @@
 </head>
 <body>
     <div class="container" id="app-container">
-        
         <aside class="sidebar">
             <div class="logo">
                 <h1>GRÊMIO - IGT</h1>
             </div>
-
             <ul class="nav-menu">
-                <li class="nav-item" onclick="window.location.href='dashboard.html'">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard Geral
-                </li>
-                <li class="nav-item" onclick="window.location.href='cadastrar-alunos.html'">
-                    <i class="fas fa-users"></i> Cadastrar Alunos
-                </li>
-                <li class="nav-item" onclick="window.location.href='chamada.html'">
-                    <i class="fas fa-clipboard-list"></i> Chamada
-                </li>
-                <li class="nav-item" onclick="window.location.href='camera.html'">
-                    <i class="fas fa-camera"></i> Facial (Python)
-                </li>
-                <li class="nav-item" onclick="window.location.href='upload-fotos.html'">
-                    <i class="fas fa-cloud-upload-alt"></i> Upload de Fotos
-                </li>
-                <li class="nav-item" onclick="window.location.href='calendario.html'">
-                    <i class="fas fa-calendar-alt"></i> Calendário
-                </li>
+                <li class="nav-item" onclick="window.location.href='dashboard.html'"><i class="fas fa-tachometer-alt"></i> Dashboard Geral</li>
+                <li class="nav-item" onclick="window.location.href='cadastrar-alunos.html'"><i class="fas fa-users"></i> Cadastrar Alunos</li>
+                <li class="nav-item" onclick="window.location.href='alunos.html'"><i class="fas fa-user-graduate"></i> Alunos</li>
+                <li class="nav-item" onclick="window.location.href='chamada.html'"><i class="fas fa-clipboard-list"></i> Chamada</li>
+                <li class="nav-item" onclick="window.location.href='camera.html'"><i class="fas fa-camera"></i> Facial (Python)</li>
+                <li class="nav-item" onclick="window.location.href='calendario.html'"><i class="fas fa-calendar-alt"></i> Calendário</li>
             </ul>
         </aside>
 
@@ -41,34 +27,49 @@
             <header class="header">
                 <h2 id="page-title">Agenda Anual do Projeto</h2>
                 <div class="header-controls">
+                    <div class="user-info">
+                        <div class="user-avatar">IGT</div>
+                        <span>Admin</span>
+                    </div>
                     <button class="logout-btn" onclick="window.location.href='../index.html'" title="Sair">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
             </header>
 
-            <div class="page active">
-                <div class="card" style="border-top: 4px solid var(--primary-color);">
-                    <div class="card-header" style="border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px;">
-                        <h3><i class="fas fa-calendar" style="color: var(--primary-color);"></i> Calendário 2026</h3>
+            <div class="page active" id="calendario-page">
+                <div class="card card-border-top">
+                    <div class="card-header border-bottom pb-3 mb-4 d-flex justify-between align-center flex-wrap gap-15">
+                        <h3 class="card-title m-0"><i class="fas fa-calendar-alt text-primary"></i> Calendário 2026</h3>
                         
-                        <div style="display: flex; gap: 15px; font-size: 0.85em; align-items: center;">
-                            <span style="display: flex; align-items: center; gap: 5px;">
-                                <div style="width: 12px; height: 12px; background: var(--primary-color); border-bottom: 2px solid #000; border-radius: 2px;"></div> Jogos
-                            </span>
-                            <span style="display: flex; align-items: center; gap: 5px;">
-                                <div style="width: 12px; height: 12px; background: var(--success-color); border-radius: 2px;"></div> Social
-                            </span>
+                        <div class="header-actions d-flex align-center flex-wrap gap-15">
+                            <div class="legend-box bg-light border-rounded p-2 d-flex gap-15 align-center text-small">
+                                <span class="legend-item d-flex align-center gap-5 text-medium">
+                                    <div class="legend-color bg-primary border-rounded-sm"></div> Jogos
+                                </span>
+                                <span class="legend-item d-flex align-center gap-5 text-medium">
+                                    <div class="legend-color bg-success border-rounded-sm"></div> Social
+                                </span>
+                                <span class="legend-item d-flex align-center gap-5 text-medium">
+                                    <div class="legend-color bg-warning border-rounded-sm"></div> Reuniões
+                                </span>
+                            </div>
+                            <button class="btn btn-primary btn-auto d-flex align-center gap-5 m-0" id="btn-novo-evento">
+                                <i class="fas fa-plus"></i> Novo Evento
+                            </button>
                         </div>
                     </div>
 
-                    <div id="calendario-anual-container" class="year-calendar-grid">
+                    <div id="calendario-anual-container" class="year-calendar-grid mt-3">
+                        <div class="loading-state text-center text-muted p-4">
+                            <i class="fas fa-spinner fa-spin icon-xl mb-2"></i>
+                            <p>Carregando eventos do calendário...</p>
                         </div>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
-
-    <script type="module" src="../js/main.js"></script>
+    <script src="../js/main.js"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chamada - IGT Grêmio</title>
+    <title>Alunos - IGT Grêmio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
 </head>
@@ -25,7 +25,7 @@
 
         <main class="main-content">
             <header class="header">
-                <h2 id="page-title">Controle de Frequência</h2>
+                <h2 id="page-title">Gestão de Alunos</h2>
                 <div class="header-controls">
                     <div class="user-info">
                         <div class="user-avatar">IGT</div>
@@ -37,68 +37,62 @@
                 </div>
             </header>
 
-            <div class="page active" id="chamada-page">
+            <div class="page active" id="alunos-page">
                 <div class="card">
-                    <div class="card-header border-bottom pb-3">
-                        <h3 class="card-title m-0"><i class="fas fa-clipboard-list text-primary"></i> Lista de Presença</h3>
+                    <div class="card-header border-bottom pb-3 mb-3 d-flex justify-between align-center flex-wrap gap-15">
+                        <h3 class="card-title m-0"><i class="fas fa-list text-primary"></i> Lista de Alunos</h3>
                         
-                        <div class="info-box filter-wrapper bg-light p-2 border-rounded d-flex gap-15 align-center">
+                        <div class="filter-wrapper d-flex flex-wrap align-center gap-15">
                             <div class="filter-group d-flex align-center gap-10">
-                                <label for="chamada-turma" class="filter-label m-0">Turma:</label>
-                                <select id="chamada-turma" class="filter-select form-control">
-                                    <option value="todas">Selecione uma turma...</option>
+                                <label for="filtro-turma" class="filter-label m-0">Turma:</label>
+                                <select id="filtro-turma" class="filter-select form-control">
+                                    <option value="todas">Todas as Turmas</option>
                                     <option value="1º Ano A">1º Ano A</option>
                                     <option value="1º Ano B">1º Ano B</option>
                                 </select>
                             </div>
                             <div class="vertical-divider"></div>
-                            <div class="filter-group d-flex align-center gap-10">
-                                <label for="chamada-data" class="filter-label m-0">Data:</label>
-                                <input type="date" id="chamada-data" class="filter-select form-control">
+                            <div class="filter-controls" id="status-filter-buttons">
+                                 <button class="btn-filter active" data-status="all">Todos</button>
+                                 <button class="btn-filter" data-status="ativo">Ativos</button>
+                                 <button class="btn-filter" data-status="inativo">Inativos</button>
                             </div>
+                        </div>
+                        
+                        <div class="header-actions flex-row-end d-flex gap-10">
+                            <div class="search-container">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="search-input" class="form-control" placeholder="Buscar por nome...">
+                            </div>
+                            <button class="btn btn-primary btn-auto" id="btn-novo-aluno" onclick="window.location.href='cadastrar-alunos.html'">
+                                <i class="fas fa-user-plus"></i> Novo Aluno
+                            </button>
                         </div>
                     </div>
                     
-                    <div class="summary-stats d-flex gap-20 mt-3 mb-3 text-muted">
-                        <span><i class="fas fa-users text-primary"></i> Total: <strong id="total-alunos-chamada">0</strong></span>
-                        <span><i class="fas fa-check-circle text-success"></i> Presentes: <strong id="total-presentes">0</strong></span>
-                        <span><i class="fas fa-times-circle text-error"></i> Ausentes: <strong id="total-ausentes">0</strong></span>
+                    <div class="summary-stats mb-3 text-muted text-small">
+                        <span id="total-alunos-lista">Mostrando resultados da listagem.</span>
                     </div>
 
                     <div class="table-container">
                         <table class="data-table w-100">
-                            <thead>
+                            <thead id="analise-thead">
                                 <tr>
-                                    <th>Matrícula</th>
-                                    <th>Nome do Aluno</th>
-                                    <th>Turma</th>
-                                    <th>Status (Presença)</th>
-                                    <th>Observações</th>
+                                    <th data-sort="matricula" class="cursor-pointer">Matrícula <i class="fas fa-sort"></i></th>
+                                    <th data-sort="nome" class="cursor-pointer">Nome do Aluno <i class="fas fa-sort"></i></th>
+                                    <th data-sort="turma" class="cursor-pointer">Turma <i class="fas fa-sort"></i></th>
+                                    <th data-sort="perfil" class="cursor-pointer">Perfil <i class="fas fa-sort"></i></th>
+                                    <th data-sort="status" class="cursor-pointer">Status <i class="fas fa-sort"></i></th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="chamada-tbody"></tbody>
+                            <tbody id="analise-tbody"></tbody>
                         </table>
                     </div>
-                    
-                    <div class="card-footer d-flex justify-between align-center border-top mt-4 pt-3">
-                        <span class="text-muted text-small"><i class="fas fa-info-circle"></i> Revise a listagem antes de salvar.</span>
-                        <button class="btn btn-primary btn-auto px-4" id="btn-salvar-chamada">
-                            <i class="fas fa-save"></i> Salvar Chamada
-                        </button>
-                    </div>
                 </div>
-            </div>
+            </div> 
         </main>
     </div>
     <script type="module" src="../js/main.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const dataInput = document.getElementById('chamada-data');
-            if (dataInput) {
-                const hoje = new Date().toISOString().split('T')[0];
-                dataInput.value = hoje;
-            }
-        });
-    </script>
 </body>
 </html>
