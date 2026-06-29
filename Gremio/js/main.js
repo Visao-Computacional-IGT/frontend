@@ -10,25 +10,41 @@ document.addEventListener('DOMContentLoaded', () => {
         { matricula: '2026007', nome: 'Beatriz Costa', turma: '1º Ano C', status: 'Ativo' }
     ];
 
-    // --- BANCO DE DADOS LOCAL (COM PROTEÇÃO CONTRA ERROS) ---
+    // --- FERIADOS NACIONAIS FIXOS ---
+    const feriadosFixos = [
+        { mes: 0, dia: 1, titulo: 'Ano Novo' },
+        { mes: 3, dia: 21, titulo: 'Tiradentes' },
+        { mes: 4, dia: 1, titulo: 'Dia do Trabalhador' },
+        { mes: 8, dia: 7, titulo: 'Independência do Brasil' },
+        { mes: 9, dia: 12, titulo: 'Nossa Sra. Aparecida' },
+        { mes: 10, dia: 2, titulo: 'Finados' },
+        { mes: 10, dia: 15, titulo: 'Proclamação da República' },
+        { mes: 11, dia: 25, titulo: 'Natal' }
+    ];
+
+    // --- BANCO DE DADOS LOCAL ---
     let eventosAno = [];
     try {
         const salvos = localStorage.getItem('eventosGremio');
         if (salvos) {
             eventosAno = JSON.parse(salvos);
         } else {
-            // Se não tiver nada salvo, carrega estes eventos como teste
             eventosAno = [
-                { mes: 5, dia: 12, tipo: 'jogo', titulo: 'Grêmio x Boca' },
-                { mes: 5, dia: 15, tipo: 'social', titulo: 'Cestas Básicas' },
-                { mes: 6, dia: 10, tipo: 'social', titulo: 'Ação Férias' },   
-                { mes: 8, dia: 15, tipo: 'jogo', titulo: 'Aniv. Grêmio' },
-                { mes: 8, dia: 20, tipo: 'reuniao', titulo: 'Reunião Diretoria' } 
+                { ano: new Date().getFullYear(), mes: 5, dia: 12, tipo: 'jogo', titulo: 'Grêmio x Boca', hora: '16:00' },
+                { ano: new Date().getFullYear(), mes: 5, dia: 15, tipo: 'social', titulo: 'Cestas Básicas', hora: '' },
+                { ano: new Date().getFullYear(), mes: 8, dia: 20, tipo: 'reuniao', titulo: 'Reunião Diretoria', hora: '14:30' } 
             ];
         }
+
+        eventosAno = eventosAno.map(ev => ({
+            ...ev, 
+            id: ev.id || Math.random().toString(36).substr(2, 9),
+            ano: ev.ano || new Date().getFullYear() 
+        }));
+
     } catch (error) {
-        console.error("Erro ao ler o cache do calendário. Resetando...", error);
-        localStorage.removeItem('eventosGremio'); // Limpa o erro
+        console.error("Erro ao ler cache. Resetando...", error);
+        localStorage.removeItem('eventosGremio'); 
         eventosAno = [];
     }
 
@@ -44,63 +60,82 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentSort = { key: 'nome', order: 'asc' };
 
-    // ==========================================
-    // INICIALIZAÇÃO
-    // ==========================================
+    function salvarEAtualizarTelas() {
+        localStorage.setItem('eventosGremio', JSON.stringify(eventosAno));
+        
+        if (document.getElementById('calendario-anual-container')) renderAnualCalendar();
+        
+        if (document.getElementById('calendar-container')) {
+            const selectM = document.getElementById('select-month');
+            const selectY = document.getElementById('select-year');
+            const m = selectM ? parseInt(selectM.value) : new Date().getMonth();
+            const y = selectY ? parseInt(selectY.value) : new Date().getFullYear();
+            renderCalendar(m, y);
+        }
+    }
+
     try {
         updateTimestamp();
         setInterval(updateTimestamp, 1000);
     } catch (e) {}
 
-    // Roda a função certa dependendo de qual página está aberta
     if (document.getElementById('calendar-container')) renderCalendar();
     if (document.getElementById('calendario-anual-container')) renderAnualCalendar();
     if (document.getElementById('analise-tbody')) sortAndRenderTable();
     if (document.getElementById('chamada-tbody')) carregarChamada();
 
-    // ==========================================
-    // BOTÃO: NOVO EVENTO
-    // ==========================================
-    if (btnNovoEvento) {
-        btnNovoEvento.addEventListener('click', () => {
-            const titulo = prompt("1. Qual o nome do evento?");
-            if (!titulo) return;
+    function solicitarNovoEvento(dataPredefinida = null) {
+        const titulo = prompt("1. Qual o nome do evento?");
+        if (!titulo) return;
 
-            const dataStr = prompt("2. Qual a data? (Formato DD/MM. Ex: 15/06)");
-            if (!dataStr || !dataStr.includes('/')) {
-                alert("Data inválida. Use o formato DD/MM.");
-                return;
-            }
+        let dataStr = dataPredefinida;
+        if (!dataStr) {
+            dataStr = prompt("2. Qual a data? (Formato DD/MM/AAAA. Ex: 15/06/2026)");
+        } else {
+            const confirmaData = prompt("2. Qual a data? (Formato DD/MM/AAAA)", dataStr);
+            if (!confirmaData) return;
+            dataStr = confirmaData;
+        }
+        
+        if (!dataStr || !dataStr.includes('/')) return alert("Data inválida. Use o formato DD/MM/AAAA.");
 
-            const tipoStr = prompt("3. Qual o tipo do evento?\n[ 1 ] Jogos\n[ 2 ] Social\n[ 3 ] Reunião");
-            let tipo = 'jogo';
-            if (tipoStr === '2') tipo = 'social';
-            if (tipoStr === '3') tipo = 'reuniao';
+        const tipoStr = prompt("3. Qual o tipo do evento?\n[ 1 ] Jogos\n[ 2 ] Social\n[ 3 ] Reunião");
+        let tipo = 'jogo';
+        if (tipoStr === '2') tipo = 'social';
+        if (tipoStr === '3') tipo = 'reuniao';
 
-            const [dia, mes] = dataStr.split('/');
-            
-            eventosAno.push({
-                mes: parseInt(mes) - 1,
-                dia: parseInt(dia),
-                tipo: tipo,
-                titulo: titulo
-            });
+        const horaStr = prompt("4. Qual o horário? (Ex: 14:30. Deixe vazio se não houver)");
 
-            localStorage.setItem('eventosGremio', JSON.stringify(eventosAno));
-            renderAnualCalendar();
-            alert("Evento adicionado com sucesso!");
+        const partesData = dataStr.split('/');
+        const dia = parseInt(partesData[0]);
+        const mes = parseInt(partesData[1]);
+        const ano = partesData[2] ? parseInt(partesData[2]) : new Date().getFullYear();
+        
+        eventosAno.push({
+            id: Date.now().toString(),
+            ano: ano,
+            mes: mes - 1,
+            dia: dia,
+            hora: horaStr || '',
+            tipo: tipo,
+            titulo: titulo
         });
+
+        salvarEAtualizarTelas(); 
+        alert("Evento adicionado com sucesso!");
     }
 
+    if (btnNovoEvento) btnNovoEvento.addEventListener('click', () => solicitarNovoEvento());
+
     // ==========================================
-    // CALENDÁRIO ANUAL (Página de Calendário)
+    // CALENDÁRIO ANUAL
     // ==========================================
     function renderAnualCalendar() {
         const container = document.getElementById('calendario-anual-container');
         if (!container) return;
         
         container.innerHTML = '';
-        const anoAtual = 2026; 
+        const anoAtual = new Date().getFullYear(); // Agora dinâmico!
         const dataAtual = new Date(); 
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
         const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
@@ -127,14 +162,18 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let i = 0; i < primeiroDia; i++) {
                 const emptyDiv = document.createElement('div');
                 emptyDiv.className = 'calendar-day empty';
-                emptyDiv.style.minHeight = '40px'; 
+                emptyDiv.style.minHeight = '80px'; 
                 gridDiv.appendChild(emptyDiv);
             }
 
             for (let dia = 1; dia <= diasNoMes; dia++) {
                 const dayDiv = document.createElement('div');
                 dayDiv.className = 'calendar-day';
-                dayDiv.style.minHeight = '40px';
+                dayDiv.style.minHeight = '80px'; 
+                
+                dayDiv.dataset.dia = dia;
+                dayDiv.dataset.mes = mes;
+                dayDiv.dataset.ano = anoAtual;
                 
                 if (dia === dataAtual.getDate() && mes === dataAtual.getMonth() && dataAtual.getFullYear() === anoAtual) {
                     dayDiv.classList.add('today');
@@ -142,17 +181,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 dayDiv.innerHTML = `<span style="display: block; width: 100%; text-align: right; color: #555; font-weight: 500;">${dia}</span>`;
 
-                const eventosDoDia = eventosAno.filter(e => e.mes === mes && e.dia === dia);
+                // Junta Feriados e Eventos do Dia
+                const feriadosDoDia = feriadosFixos.filter(f => f.mes === mes && f.dia === dia).map(f => ({...f, tipo: 'feriado', id: `feriado-${mes}-${dia}`}));
+                const eventosDoDia = eventosAno.filter(e => e.ano === anoAtual && e.mes === mes && e.dia === dia);
+                const todosEventosDia = [...feriadosDoDia, ...eventosDoDia];
                 
-                eventosDoDia.forEach(evento => {
+                todosEventosDia.forEach(evento => {
                     let classesCSS = '';
                     if (evento.tipo === 'jogo') classesCSS = 'bg-primary text-white border-bottom border-dark';
                     else if (evento.tipo === 'social') classesCSS = 'bg-success text-white';
                     else if (evento.tipo === 'reuniao') classesCSS = 'bg-warning text-dark';
+                    else if (evento.tipo === 'feriado') classesCSS = 'bg-danger text-white'; // Feriados em vermelho!
 
-                    dayDiv.innerHTML += `
-                        <div class="event-badge border-rounded-sm ${classesCSS}" style="font-size: 0.65em; padding: 3px; text-align: center; margin-top: 2px;">
-                            ${evento.titulo}
+                    const exibeHora = evento.hora ? `<b>${evento.hora}</b> ` : '';
+
+                   dayDiv.innerHTML += `
+                        <div class="event-badge border-rounded-sm ${classesCSS}" data-event-id="${evento.id}" style="font-size: 0.85em; padding: 6px; text-align: center; margin-top: 4px; cursor: pointer; font-weight: bold;" title="Clique para editar/remover">
+                            ${exibeHora}${evento.titulo}
                         </div>
                     `;
                 });
@@ -164,132 +209,147 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-// ==========================================
-// MINI CALENDÁRIO (Página de Dashboard)
-// ==========================================
+    // ==========================================
+    // MINI CALENDÁRIO (Dashboard)
+    // ==========================================
+    function renderCalendar(mesEscolhido = new Date().getMonth(), anoEscolhido = new Date().getFullYear()) {
+        const container = document.getElementById('calendar-container');
+        const monthYearLabel = document.getElementById('calendar-month-year');
+        if (!container) return;
 
-// Função principal que desenha o calendário
-function renderCalendar(mesEscolhido = new Date().getMonth(), anoEscolhido = new Date().getFullYear()) {
-    const container = document.getElementById('calendar-container');
-    const monthYearLabel = document.getElementById('calendar-month-year');
-    if (!container) return;
+        container.innerHTML = '';
+        const dataAtual = new Date();
+        const mes = mesEscolhido; 
+        const ano = anoEscolhido;
 
-    container.innerHTML = '';
-    const dataAtual = new Date();
-    const mes = mesEscolhido; 
-    const ano = anoEscolhido;
+        const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        if(monthYearLabel) monthYearLabel.textContent = `${nomesMeses[mes]} ${ano}`;
 
-    const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-    if(monthYearLabel) monthYearLabel.textContent = `${nomesMeses[mes]} ${ano}`;
+        const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        diasSemana.forEach(dia => {
+            const divDia = document.createElement('div');
+            divDia.className = 'calendar-day-header';
+            divDia.textContent = dia;
+            container.appendChild(divDia);
+        });
 
-    const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    diasSemana.forEach(dia => {
-        const divDia = document.createElement('div');
-        divDia.className = 'calendar-day-header';
-        divDia.textContent = dia;
-        container.appendChild(divDia);
-    });
-
-    const primeiroDia = new Date(ano, mes, 1).getDay(); 
-    const diasNoMes = new Date(ano, mes + 1, 0).getDate();
-    
-    // Garante que a variável eventosAno exista 
-    const eventosDoMes = (typeof eventosAno !== 'undefined' ? eventosAno : []).filter(e => e.mes === mes);
-
-    for (let i = 0; i < primeiroDia; i++) {
-        const empty = document.createElement('div');
-        empty.className = 'calendar-day empty';
-        container.appendChild(empty);
-    }
-
-    for (let dia = 1; dia <= diasNoMes; dia++) {
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'calendar-day';
+        const primeiroDia = new Date(ano, mes, 1).getDay(); 
+        const diasNoMes = new Date(ano, mes + 1, 0).getDate();
         
-        // Marca o dia atual (Hoje) 
-        if (dia === dataAtual.getDate() && mes === dataAtual.getMonth() && ano === dataAtual.getFullYear()) {
-            dayDiv.classList.add('today');
+        const eventosDoMes = (typeof eventosAno !== 'undefined' ? eventosAno : []).filter(e => e.ano === ano && e.mes === mes);
+        const feriadosDoMes = feriadosFixos.filter(f => f.mes === mes).map(f => ({...f, tipo: 'feriado', id: `feriado-${mes}-${f.dia}`}));
+
+        for (let i = 0; i < primeiroDia; i++) {
+            const empty = document.createElement('div');
+            empty.className = 'calendar-day empty';
+            empty.style.minHeight = '80px'; 
+            container.appendChild(empty);
         }
 
-        dayDiv.innerHTML = `<span style="display: block; width: 100%; text-align: right; color: #888;">${dia}</span>`;
+        for (let dia = 1; dia <= diasNoMes; dia++) {
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'calendar-day';
+            dayDiv.style.minHeight = '80px'; 
+            
+            dayDiv.dataset.dia = dia;
+            dayDiv.dataset.mes = mes;
+            dayDiv.dataset.ano = ano;
+            
+            if (dia === dataAtual.getDate() && mes === dataAtual.getMonth() && ano === dataAtual.getFullYear()) {
+                dayDiv.classList.add('today');
+            }
 
-        const eventoHj = eventosDoMes.find(e => e.dia === dia);
-        if (eventoHj) {
-            const classCSS = eventoHj.tipo === 'jogo' ? 'bg-primary text-white' : 'bg-success text-white';
-            dayDiv.innerHTML += `
-                <div class="event-badge border-rounded-sm ${classCSS} mt-1 p-1">
-                    ${eventoHj.titulo}
-                </div>
-            `;
+            dayDiv.innerHTML = `<span style="display: block; width: 100%; text-align: right; color: #888;">${dia}</span>`;
+
+            // Filtra e junta os eventos para aquele dia específico
+            const eventosHoje = eventosDoMes.filter(e => e.dia === dia);
+            const feriadosHoje = feriadosDoMes.filter(f => f.dia === dia);
+            const todosEventos = [...feriadosHoje, ...eventosHoje];
+
+            todosEventos.forEach(eventoHj => {
+                let classCSS = '';
+                if (eventoHj.tipo === 'jogo') classCSS = 'bg-primary text-white';
+                else if (eventoHj.tipo === 'social') classCSS = 'bg-success text-white';
+                else if (eventoHj.tipo === 'reuniao') classCSS = 'bg-warning text-dark';
+                else if (eventoHj.tipo === 'feriado') classCSS = 'bg-danger text-white';
+
+                const exibeHora = eventoHj.hora ? `<b>${eventoHj.hora}</b> ` : '';
+                
+                dayDiv.innerHTML += `
+                    <div class="event-badge border-rounded-sm ${classCSS} mt-1 p-2" data-event-id="${eventoHj.id}" style="cursor: pointer; font-size: 0.85em; font-weight: bold;" title="Clique para editar/remover">
+                        ${exibeHora}${eventoHj.titulo}
+                    </div>
+                `;
+            });
+
+            container.appendChild(dayDiv);
         }
-        container.appendChild(dayDiv);
     }
-}
-
-// LÓGICA DOS CONTROLES DO CALENDÁRIO (Só executa se estiver no Dashboard)
-const selectMonth = document.getElementById('select-month');
-const selectYear = document.getElementById('select-year');
-const btnPrev = document.getElementById('btn-prev-month');
-const btnNext = document.getElementById('btn-next-month');
-
-if (selectMonth && selectYear) {
-    const dataAtual = new Date();
-    const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-    
-    nomesMeses.forEach((nome, index) => {
-        const opcaoMes = document.createElement('option');
-        opcaoMes.value = index;
-        opcaoMes.textContent = nome;
-        selectMonth.appendChild(opcaoMes);
-    });
-    
-    // 2. Preenche o select de ANOS (10 anos para trás, 10 para frente)
-    for (let i = dataAtual.getFullYear() - 10; i <= dataAtual.getFullYear() + 10; i++) {
-        const opcaoAno = document.createElement('option');
-        opcaoAno.value = i;
-        opcaoAno.textContent = i;
-        if (i === dataAtual.getFullYear()) opcaoAno.selected = true;
-        selectYear.appendChild(opcaoAno);
-    }
-    
-    // Define o mês atual no select
-    selectMonth.value = dataAtual.getMonth();
-
-    // Função para atualizar a tela quando mudamos algo
-    const atualizarTela = () => {
-        renderCalendar(parseInt(selectMonth.value), parseInt(selectYear.value));
-    };
-
-    // Eventos dos botões Anterior / Próximo
-    btnPrev.addEventListener('click', () => {
-        let m = parseInt(selectMonth.value) - 1;
-        let a = parseInt(selectYear.value);
-        if (m < 0) { m = 11; a--; }
-        
-        selectMonth.value = m;
-        if (selectYear.querySelector(`option[value="${a}"]`)) selectYear.value = a;
-        atualizarTela();
-    });
-
-    btnNext.addEventListener('click', () => {
-        let m = parseInt(selectMonth.value) + 1;
-        let a = parseInt(selectYear.value);
-        if (m > 11) { m = 0; a++; }
-        
-        selectMonth.value = m;
-        if (selectYear.querySelector(`option[value="${a}"]`)) selectYear.value = a;
-        atualizarTela();
-    });
-
-    selectMonth.addEventListener('change', atualizarTela);
-    selectYear.addEventListener('change', atualizarTela);
 
     // ==========================================
-    // CORREÇÃO: Chama a função logo no início para o calendário não começar vazio!
+    // CONTROLES DO CALENDÁRIO (Anos Inteligentes)
     // ==========================================
-    atualizarTela();
-}
-    
+    const selectMonth = document.getElementById('select-month');
+    const selectYear = document.getElementById('select-year');
+    const btnPrev = document.getElementById('btn-prev-month');
+    const btnNext = document.getElementById('btn-next-month');
+
+    if (selectMonth && selectYear) {
+        const dataAtual = new Date();
+        const anoAtual = dataAtual.getFullYear();
+        const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        
+        nomesMeses.forEach((nome, index) => {
+            const opcaoMes = document.createElement('option');
+            opcaoMes.value = index;
+            opcaoMes.textContent = nome;
+            selectMonth.appendChild(opcaoMes);
+        });
+        
+        // NOVO: Vai de 2020 até AnoAtual + 10!
+        for (let i = 2020; i <= anoAtual + 10; i++) {
+            const opcaoAno = document.createElement('option');
+            opcaoAno.value = i;
+            opcaoAno.textContent = i;
+            if (i === anoAtual) opcaoAno.selected = true;
+            selectYear.appendChild(opcaoAno);
+        }
+        
+        selectMonth.value = dataAtual.getMonth();
+
+        const atualizarTela = () => {
+            renderCalendar(parseInt(selectMonth.value), parseInt(selectYear.value));
+        };
+
+        btnPrev.addEventListener('click', () => {
+            let m = parseInt(selectMonth.value) - 1;
+            let a = parseInt(selectYear.value);
+            if (m < 0) { m = 11; a--; }
+            
+            selectMonth.value = m;
+            if (selectYear.querySelector(`option[value="${a}"]`)) selectYear.value = a;
+            atualizarTela();
+        });
+
+        btnNext.addEventListener('click', () => {
+            let m = parseInt(selectMonth.value) + 1;
+            let a = parseInt(selectYear.value);
+            if (m > 11) { m = 0; a++; }
+            
+            selectMonth.value = m;
+            if (selectYear.querySelector(`option[value="${a}"]`)) selectYear.value = a;
+            atualizarTela();
+        });
+
+        selectMonth.addEventListener('change', atualizarTela);
+        selectYear.addEventListener('change', atualizarTela);
+
+        atualizarTela();
+    }
+        
+    // ==========================================
+    // LÓGICA DA TABELA E CHAMADA
+    // ==========================================
     if(statusFilterButtons) {
         statusFilterButtons.addEventListener('click', (e) => {
             const target = e.target.closest('.btn-filter');
@@ -409,5 +469,88 @@ if (selectMonth && selectYear) {
             chamadaTbody.appendChild(tr);
         });
     }
+
+    // ==========================================
+    // DELEGAÇÃO DE EVENTOS: CRIAR, EDITAR E REMOVER
+    // ==========================================
+    document.addEventListener('click', (e) => {
+        
+        const badge = e.target.closest('.event-badge');
+        if (badge && badge.dataset.eventId) {
+            e.stopPropagation(); 
+            
+            const id = badge.dataset.eventId;
+
+            // Proteção para não editar feriados
+            if (id.startsWith('feriado')) {
+                alert("Feriados nacionais são fixos e não podem ser editados ou removidos.");
+                return;
+            }
+
+            const index = eventosAno.findIndex(ev => String(ev.id) === String(id));
+            if (index === -1) return;
+
+            const evento = eventosAno[index];
+            const acao = prompt(`Gerenciar Evento: ${evento.titulo}\n\nO que deseja fazer?\n[ 1 ] Editar\n[ 2 ] Remover\n[ 3 ] Cancelar`);
+
+            if (acao === '1') {
+                const novoTitulo = prompt("1. Novo nome do evento:", evento.titulo);
+                if (!novoTitulo) return;
+
+                const mesAtual = String(evento.mes + 1).padStart(2, '0');
+                const diaAtual = String(evento.dia).padStart(2, '0');
+                const anoAtual = evento.ano || new Date().getFullYear(); 
+                
+                const novaDataStr = prompt("2. Nova data (DD/MM/AAAA):", `${diaAtual}/${mesAtual}/${anoAtual}`);
+                if (!novaDataStr || !novaDataStr.includes('/')) return alert("Data inválida.");
+
+                let tipoSugerido = '1';
+                if (evento.tipo === 'social') tipoSugerido = '2';
+                if (evento.tipo === 'reuniao') tipoSugerido = '3';
+
+                const novoTipoStr = prompt("3. Qual o novo tipo?\n[ 1 ] Jogos\n[ 2 ] Social\n[ 3 ] Reunião", tipoSugerido);
+                let novoTipo = 'jogo';
+                if (novoTipoStr === '2') novoTipo = 'social';
+                if (novoTipoStr === '3') novoTipo = 'reuniao';
+
+                const novaHoraStr = prompt("4. Qual o novo horário? (Deixe em branco se não houver)", evento.hora || "");
+
+                const partesNovaData = novaDataStr.split('/');
+                const diaNovo = parseInt(partesNovaData[0]);
+                const mesNovo = parseInt(partesNovaData[1]);
+                const anoNovo = partesNovaData[2] ? parseInt(partesNovaData[2]) : anoAtual; 
+
+                eventosAno[index] = {
+                    ...evento,
+                    titulo: novoTitulo,
+                    dia: diaNovo,
+                    mes: mesNovo - 1,
+                    ano: anoNovo,
+                    hora: novaHoraStr || '', 
+                    tipo: novoTipo
+                };
+
+                salvarEAtualizarTelas();
+                alert("Evento atualizado com sucesso!");
+
+            } else if (acao === '2') {
+                if (confirm(`Tem certeza que deseja remover o evento "${evento.titulo}"?`)) {
+                    eventosAno.splice(index, 1);
+                    salvarEAtualizarTelas();
+                    alert("Evento removido.");
+                }
+            }
+            return; 
+        }
+
+        const dayCell = e.target.closest('.calendar-day');
+        if (dayCell && !dayCell.classList.contains('empty') && dayCell.dataset.dia && dayCell.dataset.mes && dayCell.dataset.ano) {
+            const diaFormatado = String(dayCell.dataset.dia).padStart(2, '0');
+            const mesFormatado = String(parseInt(dayCell.dataset.mes) + 1).padStart(2, '0');
+            const anoFormatado = dayCell.dataset.ano; 
+            
+            solicitarNovoEvento(`${diaFormatado}/${mesFormatado}/${anoFormatado}`);
+        }
+    });
 
 });
