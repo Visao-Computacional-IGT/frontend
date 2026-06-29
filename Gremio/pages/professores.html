@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professores - IGT Grêmio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="container" id="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>GRÊMIO - IGT</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item" onclick="window.location.href='dashboard.html'"><i class="fas fa-tachometer-alt"></i> Dashboard Geral</li>
+                <li class="nav-item" onclick="window.location.href='professores.html'"><i class="fas fa-chalkboard-teacher"></i> Gerenciar Professores</li>
+                <li class="nav-item" onclick="window.location.href='cadastrar-alunos.html'"><i class="fas fa-users"></i> Cadastrar Alunos</li>
+                <li class="nav-item" onclick="window.location.href='alunos.html'"><i class="fas fa-user-graduate"></i> Alunos</li>
+                <li class="nav-item" onclick="window.location.href='chamada.html'"><i class="fas fa-clipboard-list"></i> Chamada</li>
+                <li class="nav-item" onclick="window.location.href='camera.html'"><i class="fas fa-camera"></i> Facial</li>
+                <li class="nav-item" onclick="window.location.href='calendario.html'"><i class="fas fa-calendar-alt"></i> Calendário</li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h2 id="page-title">Gestão de Utilizadores</h2>
+                <div class="header-controls">
+                    <div class="user-info">
+                        <div class="user-avatar">IGT</div>
+                        <span>Admin</span>
+                    </div>
+                    <button class="logout-btn" onclick="window.location.href='../index.html'" title="Sair">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="page active">
+                
+                <div class="card" id="card-lista">
+                    <div class="card-header border-bottom pb-3 mb-3 d-flex justify-between align-center flex-wrap gap-15">
+                        <h3 class="card-title m-0"><i class="fas fa-list text-primary"></i> Utilizadores / Professores</h3>
+                        
+                        <div class="header-actions flex-row-end d-flex gap-10">
+                            <div class="search-container">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="search-input" class="form-control" placeholder="Buscar professor...">
+                            </div>
+                            <button class="btn btn-primary btn-auto" id="btn-novo-prof">
+                                <i class="fas fa-user-plus"></i> Novo Professor
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table w-100">
+                            <thead>
+                                <tr>
+                                    <th>Nome do Professor</th>
+                                    <th>Disciplina / Cargo</th>
+                                    <th>Turno</th>
+                                    <th>Usuário (Login)</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="professores-tbody">
+                                <tr>
+                                    <td>Carlos Oliveira</td>
+                                    <td>Matemática</td>
+                                    <td>Manhã</td>
+                                    <td>carlos.mat</td>
+                                    <td><span class="text-success"><i class="fas fa-circle text-small"></i> Ativo</span></td>
+                                    <td>
+                                        <i class="fas fa-edit action-icon edit" title="Editar" onclick="abrirEdicao('Carlos Oliveira')"></i>
+                                        <i class="fas fa-trash-alt action-icon delete" title="Excluir" onclick="deletarProf()"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card hidden" id="card-formulario">
+                    <div class="card-header border-bottom pb-3 mb-4 d-flex justify-between align-center">
+                        <h3 class="card-title m-0" id="form-titulo"><i class="fas fa-user-plus text-primary"></i> Novo Registo</h3>
+                        <button class="btn btn-secondary btn-auto" id="btn-voltar"><i class="fas fa-arrow-left"></i> Voltar</button>
+                    </div>
+                    
+                    <div class="form-wrapper">
+                        <h4 class="section-title">Dados Pessoais</h4>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Nome Completo</label>
+                                <input type="text" id="prof-nome" class="form-control" placeholder="Nome completo">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">CPF</label>
+                                <input type="text" id="prof-cpf" class="form-control" placeholder="000.000.000-00">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">E-mail</label>
+                                <input type="email" id="prof-email" class="form-control" placeholder="email@instituicao.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Telefone / WhatsApp</label>
+                                <input type="text" id="prof-telefone" class="form-control" placeholder="(00) 00000-0000">
+                            </div>
+                        </div>
+
+                        <h4 class="section-title mt-4">Dados Institucionais</h4>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Disciplina / Função</label>
+                                <input type="text" id="prof-disciplina" class="form-control" placeholder="Ex: História, Direção">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Turno</label>
+                                <select id="prof-turno" class="form-control">
+                                    <option value="" disabled selected>Selecione o turno</option>
+                                    <option value="Manhã">Manhã</option>
+                                    <option value="Tarde">Tarde</option>
+                                    <option value="Noite">Noite</option>
+                                    <option value="Integral">Integral</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h4 class="section-title mt-4">Acesso ao Sistema</h4>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Nome de Utilizador</label>
+                                <input type="text" id="prof-user" class="form-control" placeholder="Ex: nome.sobrenome">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Senha</label>
+                                <input type="password" id="prof-senha" class="form-control" placeholder="Senha de acesso">
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-3" style="max-width: 250px;">
+                            <label class="form-label">Estado do Registo</label>
+                            <select id="prof-status" class="form-control">
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                            </select>
+                        </div>
+
+                        <button class="btn btn-primary btn-full mt-4" onclick="salvarDados()">
+                            <i class="fas fa-save"></i> Guardar Informações
+                        </button>
+                    </div>
+                </div>
+
+            </div> 
+        </main>
+    </div>
+
+    <script type="module" src="../js/main.js"></script>
+    <script>
+        const cardLista = document.getElementById('card-lista');
+        const cardForm = document.getElementById('card-formulario');
+        const btnNovo = document.getElementById('btn-novo-prof');
+        const btnVoltar = document.getElementById('btn-voltar');
+        const formTitulo = document.getElementById('form-titulo');
+
+        function alternarTela(modo) {
+            if (modo === 'form') {
+                cardLista.classList.add('hidden');
+                cardForm.classList.remove('hidden');
+            } else {
+                cardForm.classList.add('hidden');
+                cardLista.classList.remove('hidden');
+            }
+        }
+
+        // Função para limpar todos os campos do formulário
+        function limparFormulario() {
+            const inputs = document.querySelectorAll('#card-formulario input');
+            inputs.forEach(input => input.value = '');
+            document.getElementById('prof-turno').selectedIndex = 0;
+            document.getElementById('prof-status').value = 'Ativo';
+        }
+
+        btnNovo.addEventListener('click', () => {
+            formTitulo.innerHTML = '<i class="fas fa-user-plus text-primary"></i> Cadastrar Novo Professor';
+            limparFormulario();
+            alternarTela('form');
+        });
+
+        btnVoltar.addEventListener('click', () => alternarTela('lista'));
+
+        window.abrirEdicao = function(nome) {
+            formTitulo.innerHTML = '<i class="fas fa-user-edit text-primary"></i> Editar Professor';
+            limparFormulario();
+            
+            // Simula o preenchimento do nome para edição
+            document.getElementById('prof-nome').value = nome;
+            
+            alternarTela('form');
+        }
+
+        window.deletarProf = function() {
+            if(confirm("Deseja remover o acesso deste professor permanentemente?")) {
+                alert("Removido com sucesso.");
+            }
+        }
+
+        window.salvarDados = function() {
+            alert("Dados guardados com sucesso!");
+            alternarTela('lista');
+        }
+    </script>
+</body>
+</html>

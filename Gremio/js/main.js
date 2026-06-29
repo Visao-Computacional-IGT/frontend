@@ -164,63 +164,132 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ==========================================
-    // MINI CALENDÁRIO (Página de Dashboard)
-    // ==========================================
-    function renderCalendar() {
-        const container = document.getElementById('calendar-container');
-        const monthYearLabel = document.getElementById('calendar-month-year');
-        if (!container) return;
+// ==========================================
+// MINI CALENDÁRIO (Página de Dashboard)
+// ==========================================
 
-        container.innerHTML = '';
-        const dataAtual = new Date();
-        const mes = dataAtual.getMonth(); 
-        const ano = dataAtual.getFullYear();
+// Função principal que desenha o calendário
+function renderCalendar(mesEscolhido = new Date().getMonth(), anoEscolhido = new Date().getFullYear()) {
+    const container = document.getElementById('calendar-container');
+    const monthYearLabel = document.getElementById('calendar-month-year');
+    if (!container) return;
 
-        const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        if(monthYearLabel) monthYearLabel.textContent = `${nomesMeses[mes]} ${ano}`;
+    container.innerHTML = '';
+    const dataAtual = new Date();
+    const mes = mesEscolhido; 
+    const ano = anoEscolhido;
 
-        const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-        diasSemana.forEach(dia => {
-            const divDia = document.createElement('div');
-            divDia.className = 'calendar-day-header';
-            divDia.textContent = dia;
-            container.appendChild(divDia);
-        });
+    const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    if(monthYearLabel) monthYearLabel.textContent = `${nomesMeses[mes]} ${ano}`;
 
-        const primeiroDia = new Date(ano, mes, 1).getDay(); 
-        const diasNoMes = new Date(ano, mes + 1, 0).getDate();
-        const eventosHoje = eventosAno.filter(e => e.mes === mes);
+    const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    diasSemana.forEach(dia => {
+        const divDia = document.createElement('div');
+        divDia.className = 'calendar-day-header';
+        divDia.textContent = dia;
+        container.appendChild(divDia);
+    });
 
-        for (let i = 0; i < primeiroDia; i++) {
-            const empty = document.createElement('div');
-            empty.className = 'calendar-day empty';
-            container.appendChild(empty);
-        }
+    const primeiroDia = new Date(ano, mes, 1).getDay(); 
+    const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+    
+    // Garante que a variável eventosAno exista 
+    const eventosDoMes = (typeof eventosAno !== 'undefined' ? eventosAno : []).filter(e => e.mes === mes);
 
-        for (let dia = 1; dia <= diasNoMes; dia++) {
-            const dayDiv = document.createElement('div');
-            dayDiv.className = 'calendar-day';
-            if (dia === dataAtual.getDate()) dayDiv.classList.add('today');
-
-            dayDiv.innerHTML = `<span style="display: block; width: 100%; text-align: right; color: #888;">${dia}</span>`;
-
-            const eventoHj = eventosHoje.find(e => e.dia === dia);
-            if (eventoHj) {
-                const classCSS = eventoHj.tipo === 'jogo' ? 'bg-primary text-white' : 'bg-success text-white';
-                dayDiv.innerHTML += `
-                    <div class="event-badge border-rounded-sm ${classCSS} mt-1 p-1">
-                        ${eventoHj.titulo}
-                    </div>
-                `;
-            }
-            container.appendChild(dayDiv);
-        }
+    for (let i = 0; i < primeiroDia; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'calendar-day empty';
+        container.appendChild(empty);
     }
 
+    for (let dia = 1; dia <= diasNoMes; dia++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day';
+        
+        // Marca o dia atual (Hoje) 
+        if (dia === dataAtual.getDate() && mes === dataAtual.getMonth() && ano === dataAtual.getFullYear()) {
+            dayDiv.classList.add('today');
+        }
+
+        dayDiv.innerHTML = `<span style="display: block; width: 100%; text-align: right; color: #888;">${dia}</span>`;
+
+        const eventoHj = eventosDoMes.find(e => e.dia === dia);
+        if (eventoHj) {
+            const classCSS = eventoHj.tipo === 'jogo' ? 'bg-primary text-white' : 'bg-success text-white';
+            dayDiv.innerHTML += `
+                <div class="event-badge border-rounded-sm ${classCSS} mt-1 p-1">
+                    ${eventoHj.titulo}
+                </div>
+            `;
+        }
+        container.appendChild(dayDiv);
+    }
+}
+
+// LÓGICA DOS CONTROLES DO CALENDÁRIO (Só executa se estiver no Dashboard)
+const selectMonth = document.getElementById('select-month');
+const selectYear = document.getElementById('select-year');
+const btnPrev = document.getElementById('btn-prev-month');
+const btnNext = document.getElementById('btn-next-month');
+
+if (selectMonth && selectYear) {
+    const dataAtual = new Date();
+    const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    
+    nomesMeses.forEach((nome, index) => {
+        const opcaoMes = document.createElement('option');
+        opcaoMes.value = index;
+        opcaoMes.textContent = nome;
+        selectMonth.appendChild(opcaoMes);
+    });
+    
+    // 2. Preenche o select de ANOS (10 anos para trás, 10 para frente)
+    for (let i = dataAtual.getFullYear() - 10; i <= dataAtual.getFullYear() + 10; i++) {
+        const opcaoAno = document.createElement('option');
+        opcaoAno.value = i;
+        opcaoAno.textContent = i;
+        if (i === dataAtual.getFullYear()) opcaoAno.selected = true;
+        selectYear.appendChild(opcaoAno);
+    }
+    
+    // Define o mês atual no select
+    selectMonth.value = dataAtual.getMonth();
+
+    // Função para atualizar a tela quando mudamos algo
+    const atualizarTela = () => {
+        renderCalendar(parseInt(selectMonth.value), parseInt(selectYear.value));
+    };
+
+    // Eventos dos botões Anterior / Próximo
+    btnPrev.addEventListener('click', () => {
+        let m = parseInt(selectMonth.value) - 1;
+        let a = parseInt(selectYear.value);
+        if (m < 0) { m = 11; a--; }
+        
+        selectMonth.value = m;
+        if (selectYear.querySelector(`option[value="${a}"]`)) selectYear.value = a;
+        atualizarTela();
+    });
+
+    btnNext.addEventListener('click', () => {
+        let m = parseInt(selectMonth.value) + 1;
+        let a = parseInt(selectYear.value);
+        if (m > 11) { m = 0; a++; }
+        
+        selectMonth.value = m;
+        if (selectYear.querySelector(`option[value="${a}"]`)) selectYear.value = a;
+        atualizarTela();
+    });
+
+    selectMonth.addEventListener('change', atualizarTela);
+    selectYear.addEventListener('change', atualizarTela);
+
     // ==========================================
-    // RESTANTE DO CÓDIGO (Tabelas e Chamada)
+    // CORREÇÃO: Chama a função logo no início para o calendário não começar vazio!
     // ==========================================
+    atualizarTela();
+}
+    
     if(statusFilterButtons) {
         statusFilterButtons.addEventListener('click', (e) => {
             const target = e.target.closest('.btn-filter');
@@ -340,4 +409,5 @@ document.addEventListener('DOMContentLoaded', () => {
             chamadaTbody.appendChild(tr);
         });
     }
+
 });
